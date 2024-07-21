@@ -16,6 +16,9 @@ impl<'a> StringBuf<'a> {
         }
     }
     pub fn iter_from(&'a self, pos: usize) -> StringBufIterator {
+        if pos > self.buf.len() {
+            panic!("Iter position index out of bounds")
+        }
         StringBufIterator {
             string_buf: self,
             pos,
@@ -62,5 +65,94 @@ impl<'a> Iterator for StringBufIterator<'a> {
             return Some(chr);
         }
         None
+    }
+}
+
+#[cfg(test)]
+mod test {
+
+    use std::result;
+
+    use super::StringBuf;
+
+    #[test]
+    pub fn test_normal_buff_iter() {
+        let query = "select * from kek;\n";
+
+        let buff = StringBuf::new(&query);
+
+        let result = buff.iter().next();
+        assert_eq!(Some('s'), result);
+
+        let result = buff.iter().fetch_to_delim(" ");
+        assert_eq!(Some("select"), result);
+
+        let result = buff.iter().curr();
+        assert_eq!(Some('s'), result);
+
+        let buff_iter = buff.iter();
+
+        let _ = buff_iter.curr();
+        let result = buff_iter.curr();
+        assert_eq!(Some('s'), result);
+
+        let mut buff_iter = buff.iter();
+        let _ = buff_iter.next();
+        let result = buff_iter.next();
+        assert_eq!(Some('e'), result);
+
+        let mut buff_iter = buff.iter_from(3);
+        let result = buff_iter.next();
+        assert_eq!(Some('e'), result);
+
+        let buff_iter = buff.iter_from(3);
+        let result = buff_iter.prev();
+        assert_eq!(Some('l'), result);
+
+        let buff_iter = buff.iter_from(3);
+        let _ = buff_iter.prev();
+        let result = buff_iter.curr();
+        assert_eq!(Some('e'), result);
+
+        let mut buff_iter = buff.iter_from(9);
+        let result = buff_iter.fetch_to_delim(" ");
+        assert_eq!(Some("from"), result);
+
+        let mut buff_iter = buff.iter_from(0);
+        let result = buff_iter.fetch_to_delim("\n");
+        assert_eq!(Some("select * from kek;"), result);
+
+        let mut buff_iter = buff.iter_from(0);
+        for _ in &mut buff_iter {}
+        let result = buff_iter.curr();
+        assert_eq!(None, result);
+    }
+
+    #[test]
+    pub fn test_empty_buff_iter() {
+        let query = "";
+
+        let buff = StringBuf::new(&query);
+
+        let result = buff.iter().next();
+        assert_eq!(None, result);
+
+        let result = buff.iter().fetch_to_delim(" ");
+        assert_eq!(None, result);
+
+        let result = buff.iter().curr();
+        assert_eq!(None, result);
+    }
+
+
+
+    #[test]
+    #[should_panic(expected = "Iter position index out of bounds")]
+    pub fn test_empty_buff_iter_at_panic() {
+        let query = "";
+
+        let buff = StringBuf::new(&query);
+
+        let _ = buff.iter_from(7).curr();
     }
 }
