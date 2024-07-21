@@ -9,7 +9,7 @@ impl<'a> StringBuf<'a> {
     pub fn buf(&self) -> &'a str {
         self.buf
     }
-    pub fn iter(&'a self) -> StringBufIterator {
+    pub fn iter(&self) -> StringBufIterator {
         StringBufIterator {
             string_buf: self,
             pos: 0,
@@ -32,8 +32,11 @@ pub struct StringBufIterator<'a> {
 }
 
 impl<'a> StringBufIterator<'a> {
-    pub fn prev(&self) -> Option<char> {
-        self.string_buf.buf[..self.pos].chars().rev().next()
+    pub fn prev(&mut self) -> Option<char> {
+        let ch = self.string_buf.buf[..self.pos].chars().rev().next();
+        self.pos-=1;
+        ch
+
     }
 
     pub fn curr(&self) -> Option<char> {
@@ -50,19 +53,29 @@ impl<'a> StringBufIterator<'a> {
             None
         }
     }
+
+    pub fn fetch_while<F>(&mut self, mut check_func: F) -> &str
+    where
+        F: FnMut(char) -> bool,
+    {
+        let start_pos = self.pos;
+        while let Some(ch) = self.next() {
+            if !check_func(ch) {
+                self.prev();
+                break;
+            }
+        }
+        &self.string_buf.buf[start_pos..self.pos]
+    }
 }
 
 impl<'a> Iterator for StringBufIterator<'a> {
     type Item = char;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.pos > self.string_buf.buf.len() {
-            return None;
-        }
-
-        if let Some(chr) = self.curr() {
-            self.pos += chr.len_utf8();
-            return Some(chr);
+        if let Some(ch) = self.curr() {
+            self.pos += ch.len_utf8();
+            return Some(ch);
         }
         None
     }
@@ -70,8 +83,6 @@ impl<'a> Iterator for StringBufIterator<'a> {
 
 #[cfg(test)]
 mod test {
-
-    use std::result;
 
     use super::StringBuf;
 
@@ -143,8 +154,6 @@ mod test {
         let result = buff.iter().curr();
         assert_eq!(None, result);
     }
-
-
 
     #[test]
     #[should_panic(expected = "Iter position index out of bounds")]
