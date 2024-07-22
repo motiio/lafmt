@@ -34,9 +34,8 @@ pub struct StringBufIterator<'a> {
 impl<'a> StringBufIterator<'a> {
     pub fn prev(&mut self) -> Option<char> {
         let ch = self.string_buf.buf[..self.pos].chars().rev().next();
-        self.pos-=1;
+        self.pos -= 1;
         ch
-
     }
 
     pub fn curr(&self) -> Option<char> {

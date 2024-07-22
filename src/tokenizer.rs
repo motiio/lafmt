@@ -31,8 +31,9 @@ pub fn tokenize(query: &str) -> Result<Vec<Token>, String> {
     while let Some(ch) = buff_iter.next() {
         let token = match ch {
             _ if ch.is_whitespace() => continue,
-            'A'..='Z' | 'a'..='z' => tokenize_string(&mut buff_iter)?,
+            'A'..='Z' | 'a'..='z'  => tokenize_string(&mut buff_iter)?,
             '0'..='9' => tokenize_number(&mut buff_iter)?,
+            '\"' | '\'' => tokenize_quoted_literal(&mut buff_iter)?,
             '*' => Token::Asterisk('*'),
             ':' => Token::Colon,
             ';' => Token::Semicolon,
@@ -67,6 +68,29 @@ fn tokenize_number<'a>(buff_iter: &mut StringBufIterator) -> Result<Token, Strin
     match word.parse::<f64>() {
         Ok(w) => Ok(Token::NumberLiteral(w.to_string())),
         Err(_) => Err(format!("Unexpected number token {}", word)),
+    }
+}
+
+fn tokenize_quoted_literal(buff_iter: &mut StringBufIterator) -> Result<Token, String> {
+    let mut string_literal = String::new();
+
+    match buff_iter.prev() {
+        Some('\"') => {
+            buff_iter.next();
+            if let Some(word) = buff_iter.fetch_to_delim("\"") {
+                string_literal.push_str(word)
+            }
+            Ok(Token::Identifier(string_literal))
+        }
+        Some('\'') => {
+            buff_iter.next();
+            if let Some(word) = buff_iter.fetch_to_delim("\'") {
+                string_literal.push_str(word)
+            }
+            Ok(Token::StringLiteral(string_literal))
+        }
+
+        _ => Err("Oops".to_string()),
     }
 }
 
@@ -115,8 +139,6 @@ mod test {
             assert_eq!(1, 0);
         }
     }
-
-
 
     #[test]
     pub fn test_alias_query() {
@@ -190,7 +212,62 @@ mod test {
                 vec![
                     Token::Keyword(Keyword::Select),
                     Token::NumberLiteral("123".to_string()),
+                    Token::Comma,
+                    Token::Identifier("mem".to_string()),
+                    Token::Keyword(Keyword::From),
+                    Token::Identifier(String::from("kek")),
+                    Token::Keyword(Keyword::Join),
                     Token::Identifier(String::from("lol")),
+                    Token::Keyword(Keyword::On),
+                    Token::Identifier(String::from("kek")),
+                    Token::Dot,
+                    Token::Identifier(String::from("id")),
+                    Token::Equal,
+                    Token::Identifier(String::from("lol")),
+                    Token::Dot,
+                    Token::Identifier(String::from("id")),
+                    Token::Semicolon,
+                ],
+                tokens
+            );
+        } else {
+            assert_eq!(1, 0);
+        }
+    }
+
+    #[test]
+    pub fn test_string_literal_query() {
+        let query = "select \'123\', \'mem\' from kek;\n";
+
+        if let Ok(tokens) = tokenize(&query) {
+            assert_eq!(
+                vec![
+                    Token::Keyword(Keyword::Select),
+                    Token::StringLiteral("123".to_string()),
+                    Token::Comma,
+                    Token::StringLiteral(String::from("mem")),
+                    Token::Keyword(Keyword::From),
+                    Token::Identifier(String::from("kek")),
+                    Token::Semicolon,
+                ],
+                tokens
+            );
+        } else {
+            assert_eq!(1, 0);
+        }
+    }
+
+    #[test]
+    pub fn test_quoted_identifier_query() {
+        let query = "select \'123\', \"mem\" from kek;\n";
+
+        if let Ok(tokens) = tokenize(&query) {
+            assert_eq!(
+                vec![
+                    Token::Keyword(Keyword::Select),
+                    Token::StringLiteral("123".to_string()),
+                    Token::Comma,
+                    Token::Identifier(String::from("mem")),
                     Token::Keyword(Keyword::From),
                     Token::Identifier(String::from("kek")),
                     Token::Semicolon,
