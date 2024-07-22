@@ -5,4 +5,3 @@ edition = "2021"
 
 [dependencies]
 derive_more = "0.99.18"
-regex = "1.10.5"

@@ -116,14 +116,14 @@ mod test {
         let result = buff_iter.next();
         assert_eq!(Some('e'), result);
 
-        let buff_iter = buff.iter_from(3);
+        let mut buff_iter = buff.iter_from(3);
         let result = buff_iter.prev();
         assert_eq!(Some('l'), result);
 
-        let buff_iter = buff.iter_from(3);
+        let mut buff_iter = buff.iter_from(3);
         let _ = buff_iter.prev();
         let result = buff_iter.curr();
-        assert_eq!(Some('e'), result);
+        assert_eq!(Some('l'), result);
 
         let mut buff_iter = buff.iter_from(9);
         let result = buff_iter.fetch_to_delim(" ");

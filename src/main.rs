@@ -1,4 +1,3 @@
-use lafmt::string_buf::StringBuf;
 use lafmt::tokenizer::tokenize;
 use std::{fs::File, io::Read};
 

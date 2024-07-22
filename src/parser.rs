@@ -1,4 +1,3 @@
-
 pub struct Parser<'a> {
     pub raw_code: &'a String,
 }
