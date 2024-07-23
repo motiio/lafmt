@@ -1,9 +1,11 @@
+
 pub struct Parser<'a> {
-    pub raw_code: &'a String,
+    pub raw_code: &'a str,
+    pub ast: AstNode,
 }
 
-impl Parser<'_> {
-    pub fn new(raw_code: &String) -> Parser {
-        Parser { raw_code }
+impl Parser<'a> {
+    pub fn new<'a>(raw_code: &'a str, tokens: &'a Vec<Token>) -> Parser {
+        Parser { raw_code, tokens }
     }
 }

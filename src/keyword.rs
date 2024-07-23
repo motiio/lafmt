@@ -12,6 +12,11 @@ pub enum Keyword {
     Right,
     Join,
     On,
+    And,
+    Or,
+    Union,
+    All,
+    Distinct
 }
 
 pub struct ParseKeywordError;
@@ -28,6 +33,11 @@ impl FromStr for Keyword {
             "right" => Ok(Keyword::Right),
             "join" => Ok(Keyword::Join),
             "on" => Ok(Keyword::On),
+            "and" => Ok(Keyword::And),
+            "or" => Ok(Keyword::Or),
+            "union" => Ok(Keyword::Union),
+            "all" => Ok(Keyword::All),
+            "distinct" => Ok(Keyword::Distinct),
             _ => Err(ParseKeywordError),
         }
     }

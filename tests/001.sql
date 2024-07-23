@@ -1,1 +1,1 @@
-select 1, "kek" from dual;
+select 1, tab."kek", 'lol' from tab;

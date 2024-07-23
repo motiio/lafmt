@@ -31,7 +31,7 @@ pub fn tokenize(query: &str) -> Result<Vec<Token>, String> {
     while let Some(ch) = buff_iter.next() {
         let token = match ch {
             _ if ch.is_whitespace() => continue,
-            'A'..='Z' | 'a'..='z'  => tokenize_string(&mut buff_iter)?,
+            'A'..='Z' | 'a'..='z' => tokenize_string(&mut buff_iter)?,
             '0'..='9' => tokenize_number(&mut buff_iter)?,
             '\"' | '\'' => tokenize_quoted_literal(&mut buff_iter)?,
             '*' => Token::Asterisk('*'),
@@ -48,7 +48,7 @@ pub fn tokenize(query: &str) -> Result<Vec<Token>, String> {
     Ok(tokens)
 }
 
-fn tokenize_string<'a>(buff_iter: &mut StringBufIterator) -> Result<Token, String> {
+fn tokenize_string(buff_iter: &mut StringBufIterator) -> Result<Token, String> {
     buff_iter.prev();
     let word = buff_iter.fetch_while(|ch| matches!(ch, 'A'..='Z' | 'a'..='z' | '0'..='9' | '_' ));
 
@@ -61,7 +61,7 @@ fn tokenize_string<'a>(buff_iter: &mut StringBufIterator) -> Result<Token, Strin
     Err(format!("Unexpected string token {}", word))
 }
 
-fn tokenize_number<'a>(buff_iter: &mut StringBufIterator) -> Result<Token, String> {
+fn tokenize_number(buff_iter: &mut StringBufIterator) -> Result<Token, String> {
     buff_iter.prev();
     let word = buff_iter.fetch_while(|ch| matches!(ch, '0'..='9' | '.'));
 
