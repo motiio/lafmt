@@ -1,7 +1,10 @@
+mod keyword;
+mod string_buf;
+
 use derive_more::Display;
 
-use crate::keyword::Keyword;
-use crate::string_buf::{StringBuf, StringBufIterator};
+use self::keyword::Keyword;
+use self::string_buf::{StringBuf, StringBufIterator};
 
 #[derive(Display, Debug, PartialEq)]
 pub enum Token {
@@ -96,8 +99,7 @@ fn tokenize_quoted_literal(buff_iter: &mut StringBufIterator) -> Result<Token, S
 
 #[cfg(test)]
 mod test {
-
-    use crate::keyword::Keyword;
+    use crate::tokenizer::keyword::Keyword;
     use crate::tokenizer::{tokenize, Token};
 
     #[test]

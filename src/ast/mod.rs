@@ -15,16 +15,16 @@ pub enum StatementType {
     DataManipulation(DataManipulation),
 }
 
-pub struct Statement {
-    stmt_type: StatementType,
-    parent: Option<AstNode<Construction>>,
-    children: Vec<AstNode<Construction>>,
-}
-
-pub enum Construction {
-    Statement(Statement),
-    Expression(Expression),
-}
+// pub struct Statement {
+//     stmt_type: StatementType,
+//     parent: Option<AstNode<Construction>>,
+//     children: Vec<AstNode<Construction>>,
+// }
+//
+// pub enum Construction {
+//     Statement(Statement),
+//     Expression(Expression),
+// }
 
 pub struct AstNode<Construction> {
     construction: Construction,

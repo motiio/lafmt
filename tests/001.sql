@@ -1,1 +1,2 @@
-select 1, tab."kek", 'lol' from tab;
+select 1, tab."kek", 'lol' 
+from tab;
