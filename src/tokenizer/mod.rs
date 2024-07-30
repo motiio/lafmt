@@ -1,4 +1,4 @@
-mod keyword;
+pub mod keyword;
 mod string_buf;
 
 use derive_more::Display;
@@ -6,7 +6,7 @@ use derive_more::Display;
 use self::keyword::Keyword;
 use self::string_buf::{StringBuf, StringBufIterator};
 
-#[derive(Display, Debug, PartialEq)]
+#[derive(Display, Debug, PartialEq, Clone)]
 pub enum Token {
     Keyword(Keyword),
 
@@ -17,13 +17,15 @@ pub enum Token {
 
     Asterisk(char),
 
-    Equal,
+    Eq,
 
     Dot,
     Comma,
 
     Colon,
     Semicolon,
+
+    EOF,
 }
 
 pub fn tokenize(query: &str) -> Result<Vec<Token>, String> {
@@ -42,11 +44,12 @@ pub fn tokenize(query: &str) -> Result<Vec<Token>, String> {
             ';' => Token::Semicolon,
             '.' => Token::Dot,
             ',' => Token::Comma,
-            '=' => Token::Equal,
+            '=' => Token::Eq,
             _ => return Err(format!("Unexpected token '{}'", ch)),
         };
         tokens.push(token)
     }
+    tokens.push(Token::EOF);
 
     Ok(tokens)
 }
@@ -224,7 +227,7 @@ mod test {
                     Token::Identifier(String::from("kek")),
                     Token::Dot,
                     Token::Identifier(String::from("id")),
-                    Token::Equal,
+                    Token::Eq,
                     Token::Identifier(String::from("lol")),
                     Token::Dot,
                     Token::Identifier(String::from("id")),
