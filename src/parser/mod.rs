@@ -17,6 +17,7 @@ pub struct Parser {
     // pub ast: AstNode,
 }
 
+#[derive(Debug)]
 pub enum ParserError {
     UnknownParsersError(String),
     DMLParseError(DMLParseError),
@@ -46,31 +47,33 @@ impl Parser {
         if let Ok(tokens) = tokenizer::tokenize(query) {
             self.tokens = tokens;
         }
-        let next_token = self.next_token().unwrap_or_else(|| Token::Semicolon);
-        println!("{:?}", next_token);
+        let mut curr_token = self.curr_token().unwrap_or_else(|| Token::Semicolon);
         loop {
-            match next_token {
+            match curr_token {
                 Token::EOF => break,
                 Token::Semicolon => continue,
                 Token::Keyword(Keyword::Select) => {
-                    self.prev_token();
                     let q = parse_dml_statement(self)?;
                     result.push(q);
                 }
                 _ => {
-                    println!("{:?}", next_token);
+                    println!("{:?} at Index[{}]", curr_token, self.index);
                     break;
                 }
             }
-        }
 
-        // println!("{:?}", self.tokens);
+            curr_token = self.next_token().unwrap_or_else(|| Token::Semicolon);
+        }
         Ok(result)
+    }
+    pub fn curr_token(&self) -> Option<Token> {
+        let token = self.tokens.get(self.index).map(|token| token.clone());
+        token
     }
 
     pub fn next_token(&mut self) -> Option<Token> {
-        let token = self.tokens.get(self.index).map(|token| token.clone());
         self.index += 1;
+        let token = self.tokens.get(self.index).map(|token| token.clone());
         token
     }
     pub fn prev_token(&mut self) -> Option<Token> {

@@ -1,2 +1,2 @@
-select 1, tab."kek", 'lol' 
+select distinct * 
 from tab;

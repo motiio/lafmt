@@ -7,7 +7,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut query: String = String::new();
     f.read_to_string(&mut query)?;
     let mut p = parser::Parser::new();
-    let _ = p.parse(&query);
+    let kek = p.parse(&query);
+    println!("{:?}", kek);
 
     println!("{}", &query);
 
