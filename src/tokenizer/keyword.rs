@@ -15,7 +15,8 @@ pub enum Keyword {
     Or,
     Union,
     All,
-    Distinct
+    Distinct,
+    Unique,
 }
 
 pub struct ParseKeywordError;
@@ -37,6 +38,7 @@ impl FromStr for Keyword {
             "union" => Ok(Keyword::Union),
             "all" => Ok(Keyword::All),
             "distinct" => Ok(Keyword::Distinct),
+            "unique" => Ok(Keyword::Unique),
             _ => Err(ParseKeywordError),
         }
     }

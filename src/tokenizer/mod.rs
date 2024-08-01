@@ -25,6 +25,9 @@ pub enum Token {
     Colon,
     Semicolon,
 
+    LParen,
+    RParen,
+
     EOF,
 }
 
@@ -45,6 +48,8 @@ pub fn tokenize(query: &str) -> Result<Vec<Token>, String> {
             '.' => Token::Dot,
             ',' => Token::Comma,
             '=' => Token::Eq,
+            '(' => Token::LParen,
+            ')' => Token::RParen,
             _ => return Err(format!("Unexpected token '{}'", ch)),
         };
         tokens.push(token)

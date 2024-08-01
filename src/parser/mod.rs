@@ -2,7 +2,7 @@
 mod catalog_info;
 mod statement;
 
-use self::statement::{parse_dml_statement, DMLParseError, Statement};
+use self::statement::{parse_query_statement, DMLParseError, Statement};
 
 use crate::tokenizer::{self, keyword::Keyword, Token};
 
@@ -53,7 +53,7 @@ impl Parser {
                 Token::EOF => break,
                 Token::Semicolon => continue,
                 Token::Keyword(Keyword::Select) => {
-                    let q = parse_dml_statement(self)?;
+                    let q = parse_query_statement(self);
                     result.push(q);
                 }
                 _ => {
@@ -62,7 +62,7 @@ impl Parser {
                 }
             }
 
-            curr_token = self.next_token().unwrap_or_else(|| Token::Semicolon);
+            curr_token = self.fetch_token().unwrap_or_else(|| Token::Semicolon);
         }
         Ok(result)
     }
@@ -76,9 +76,17 @@ impl Parser {
         let token = self.tokens.get(self.index).map(|token| token.clone());
         token
     }
+
     pub fn prev_token(&mut self) -> Option<Token> {
         self.index -= 1;
         let token = self.tokens.get(self.index).map(|token| token.clone());
         token
     }
+
+    pub fn fetch_token(&mut self) -> Option<Token> {
+        let token = self.tokens.get(self.index).map(|token| token.clone());
+        self.index += 1;
+        token
+    }
+
 }

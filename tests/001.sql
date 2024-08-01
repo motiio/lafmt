@@ -1,2 +1,2 @@
-select distinct * 
+select unique maf, laf
 from tab;

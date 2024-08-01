@@ -1,21 +1,15 @@
-mod dml;
-pub use dml::parse_dml_statement;
-pub use dml::DMLParseError;
+mod query;
+use crate::parser::Parser;
+pub use query::DMLParseError;
+use query::{parse_query_block, parse_subquery, SubQuery};
 
-# [derive(Debug)]
-pub enum Statement{
+#[derive(Debug)]
+pub enum Statement {
     // SELECT
-    Query(Box<Query>)
+    Query(SubQuery),
 }
 
-# [derive(Debug)]
-pub struct Query {
-    pub body: Box<QueryBody>,
+pub fn parse_query_statement(p: &mut Parser) -> Statement {
+    let s_q = parse_subquery(p).expect("Jopa").unwrap();
+    Statement::Query(s_q)
 }
-
-# [derive(Debug)]
-pub enum QueryBody {
-    Select(Box<dml::Select>),
-}
-
-
