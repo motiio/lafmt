@@ -1,14 +1,18 @@
 // use crate::AstNode;
-mod catalog_info;
+mod expression;
 mod statement;
 
 use self::statement::{parse_query_statement, DMLParseError, Statement};
 
 use crate::tokenizer::{self, keyword::Keyword, Token};
+use std::iter::Iterator;
+use std::ops::{Range, RangeInclusive, RangeTo};
+use std::slice::SliceIndex;
 
 #[derive(Debug)]
-pub struct Ident {
+pub struct Column {
     pub value: String,
+    pub alias: Option<String>,
 }
 
 pub struct Parser {
@@ -47,7 +51,8 @@ impl Parser {
         if let Ok(tokens) = tokenizer::tokenize(query) {
             self.tokens = tokens;
         }
-        let mut curr_token = self.curr_token().unwrap_or_else(|| Token::Semicolon);
+        // Start parsing tokens
+        let mut curr_token = self.peek_token().unwrap_or_else(|| &Token::Semicolon);
         loop {
             match curr_token {
                 Token::EOF => break,
@@ -57,36 +62,45 @@ impl Parser {
                     result.push(q);
                 }
                 _ => {
-                    println!("{:?} at Index[{}]", curr_token, self.index);
+                    // Копируем значение self.index до вызова изменяемых методов
                     break;
                 }
             }
 
-            curr_token = self.fetch_token().unwrap_or_else(|| Token::Semicolon);
+            // После этого безопасно вызвать изменяющий метод
+            curr_token = self.token_next().unwrap_or_else(|| &Token::Semicolon);
         }
         Ok(result)
     }
-    pub fn curr_token(&self) -> Option<Token> {
-        let token = self.tokens.get(self.index).map(|token| token.clone());
-        token
+
+    pub fn peek_token(&self) -> Option<&Token> {
+        self.tokens.get(self.index)
     }
 
-    pub fn next_token(&mut self) -> Option<Token> {
+    pub fn next_token(&mut self) -> Option<&Token> {
+        //++token
         self.index += 1;
-        let token = self.tokens.get(self.index).map(|token| token.clone());
+        self.tokens.get(self.index)
+    }
+
+    pub fn token_next(&mut self) -> Option<&Token> {
+        //token++
+        let token = self.tokens.get(self.index);
+        self.index += 1;
         token
     }
 
-    pub fn prev_token(&mut self) -> Option<Token> {
+    pub fn prev_token(&mut self) -> Option<&Token> {
         self.index -= 1;
-        let token = self.tokens.get(self.index).map(|token| token.clone());
-        token
+        self.tokens.get(self.index)
     }
 
-    pub fn fetch_token(&mut self) -> Option<Token> {
-        let token = self.tokens.get(self.index).map(|token| token.clone());
-        self.index += 1;
-        token
+    pub fn peek_nth(&self, index: usize) -> Option<&Token> {
+        self.tokens.get(self.index + index)
     }
 
+    pub fn move_index(&mut self, size: usize) -> usize{
+        self.index += size;
+        self.index
+    }
 }
