@@ -249,7 +249,7 @@ fn parse_select_list(p: &mut Parser) -> Result<(Distinc, Vec<SelectItem>), DMLPa
                         let expression = SimpleExpression {
                             schema: Some(schema.to_string()),
                             table: Some(table.to_string()),
-                            column: column.to_string(), // Поскольку это Asterisk
+                            column: column.to_string(),
                         };
                         select_list.push(SelectItem {
                             expression: Expression::SimpleExpression(expression),
@@ -271,7 +271,7 @@ fn parse_select_list(p: &mut Parser) -> Result<(Distinc, Vec<SelectItem>), DMLPa
                         let expression = SimpleExpression {
                             schema: Some(schema.to_string()),
                             table: Some(table.to_string()),
-                            column: column.to_string(), // Поскольку это Asterisk
+                            column: column.to_string(),
                         };
                         select_list.push(SelectItem {
                             expression: Expression::SimpleExpression(expression),
@@ -293,7 +293,7 @@ fn parse_select_list(p: &mut Parser) -> Result<(Distinc, Vec<SelectItem>), DMLPa
                         let expression = SimpleExpression {
                             schema: Some(schema.to_string()),
                             table: Some(table.to_string()),
-                            column: "*".to_string(), // Поскольку это Asterisk
+                            column: "*".to_string(),
                         };
                         select_list.push(SelectItem {
                             expression: Expression::SimpleExpression(expression),
@@ -315,7 +315,7 @@ fn parse_select_list(p: &mut Parser) -> Result<(Distinc, Vec<SelectItem>), DMLPa
                         let expression = SimpleExpression {
                             schema: None,
                             table: Some(table.to_string()),
-                            column: column.to_string(), // Поскольку это Asterisk
+                            column: column.to_string(),
                         };
                         select_list.push(SelectItem {
                             expression: Expression::SimpleExpression(expression),
@@ -337,7 +337,7 @@ fn parse_select_list(p: &mut Parser) -> Result<(Distinc, Vec<SelectItem>), DMLPa
                         let expression = SimpleExpression {
                             schema: None,
                             table: Some(table.to_string()),
-                            column: column.to_string(), // Поскольку это Asterisk
+                            column: column.to_string(),
                         };
                         select_list.push(SelectItem {
                             expression: Expression::SimpleExpression(expression),
@@ -381,7 +381,7 @@ fn parse_select_list(p: &mut Parser) -> Result<(Distinc, Vec<SelectItem>), DMLPa
                         let expression = SimpleExpression {
                             schema: None,
                             table: Some(table.to_string()),
-                            column: "*".to_string(), // Поскольку это Asterisk
+                            column: "*".to_string(),
                         };
                         select_list.push(SelectItem {
                             expression: Expression::SimpleExpression(expression),
@@ -403,7 +403,7 @@ fn parse_select_list(p: &mut Parser) -> Result<(Distinc, Vec<SelectItem>), DMLPa
                         let expression = SimpleExpression {
                             schema: None,
                             table: None,
-                            column: column.to_string(), // Поскольку это Asterisk
+                            column: column.to_string(),
                         };
                         select_list.push(SelectItem {
                             expression: Expression::SimpleExpression(expression),
@@ -425,7 +425,7 @@ fn parse_select_list(p: &mut Parser) -> Result<(Distinc, Vec<SelectItem>), DMLPa
                         let expression = SimpleExpression {
                             schema: None,
                             table: None,
-                            column: column.to_string(), // Поскольку это Asterisk
+                            column: column.to_string(),
                         };
                         select_list.push(SelectItem {
                             expression: Expression::SimpleExpression(expression),
@@ -447,7 +447,7 @@ fn parse_select_list(p: &mut Parser) -> Result<(Distinc, Vec<SelectItem>), DMLPa
                         let expression = SimpleExpression {
                             schema: None,
                             table: None,
-                            column: column.to_string(), // Поскольку это Asterisk
+                            column: column.to_string(),
                         };
                         select_list.push(SelectItem {
                             expression: Expression::SimpleExpression(expression),
